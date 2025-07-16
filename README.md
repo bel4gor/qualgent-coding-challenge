@@ -140,22 +140,32 @@ Below are example logs demonstrating job submission, execution, and retries.
 
 ---
 
-### CLI Job Submission
+### Single CLI Job Submission
 ```bash
 $ qgjob submit --org-id=qualgent --app-version-id=xyz123 --test=tests/onboarding.spec.js --priority=1 --wait
 Success! Job submitted: 02c57c1a-2f47-4e3e-b264-b30a7e92e804
-Waiting for job to complete...
+Waiting for job: 02c57c1a-2f47-4e3e-b264-b30a7e92e804 | App Version: xyz123 | Priority: 1 | Test: tests/onboarding.spec.js to complete...
 Job status: queued
 Job status: running
 Job status: passed
 Success! Test passed.
 ```
 
-## Worker Job Processing
+### Multiple CLI Job Submission (no wait; jobs are completed in order of priority by worker)
+```bash
+$ qgjob submit --org-id=qualgent --app-version-id=xyz123 --test=tests/login_flow.spec.js --priority=4 --no-wait
+  qgjob submit --org-id=qualgent --app-version-id=abc456 --test=tests/signup_validation.spec.js --priority=2 --no-wait
+  qgjob submit --org-id=qualgent --app-version-id=abc456 --test=tests/profile_update.spec.js --priority=3 --no-wait
+Success! Job submitted: e5d3bdb6-dbf5-4d4c-86ba-136414ebf0c5
+Success! Job submitted: ec5977cb-82c7-4d57-b52d-1fe95ddacbbf
+Success! Job submitted: 4240577b-e1af-4843-87be-c519e789b520
+```
+
+## Worker Job Processing and Waiting
 ```bash
 $ python server/worker.py
 Worker has started! Polling for jobs...
-Running job 02c57c1a-2f47-4e3e-b264-b30a7e92e804 for test tests/onboarding.spec.js...
+Waiting for job: 02c57c1a-2f47-4e3e-b264-b30a7e92e804 | App Version: xyz123 | Priority: 1 | Test: tests/onboarding.spec.js to complete...
 Job 02c57c1a-2f47-4e3e-b264-b30a7e92e804 completed with status: passed
 No jobs available. Retrying... (1/5)
 No jobs available. Retrying... (2/5)
@@ -168,7 +178,7 @@ Goodbye.
 
 ## Retry Logic (After Failure)
 ```bash
-▶Running job c13acbc9-bb8d-4a3c-81c0-4c124a420001 for test tests/checkout.spec.js...
+▶Waiting for job: c13acbc9-bb8d-4a3c-81c0-4c124a420001 | App Version: xyz123 | Priority: 3 | Test: tests/checkout.spec.js to complete...
 Job c13acbc9-bb8d-4a3c-81c0-4c124a420001 failed. Retrying job... (1/2)
 Job c13acbc9-bb8d-4a3c-81c0-4c124a420001 failed. Retrying job... (2/2)
 Job c13acbc9-bb8d-4a3c-81c0-4c124a420001 completed with status: passed
