@@ -1,4 +1,4 @@
-name: AppWright Test
+name: Single Job Test
 on: [push]
 
 jobs:
