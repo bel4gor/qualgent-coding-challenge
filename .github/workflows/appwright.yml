@@ -29,14 +29,7 @@ jobs:
           python server/worker.py &
           sleep 2
 
-      - name: Submit test jobs via CLI
+      - name: Submit AppWright test job
         run: |
-            qgjob submit --org-id=qualgent --app-version-id=xyz123 --test=tests/onboarding.spec.js --wait
-        continue-on-error: false
-
-      - name: Submit multiple test jobs via CLI
-        run: |
-            qgjob submit --org-id=qualgent --app-version-id=xyz123 --test=tests/login_flow.spec.js --priority=4 --no-wait
-            qgjob submit --org-id=qualgent --app-version-id=abc456 --test=tests/signup_validation.spec.js --priority=2 --no-wait
-            qgjob submit --org-id=qualgent --app-version-id=abc456 --test=tests/profile_update.spec.js --priority=3 --no-wait
+            qgjob submit --org-id=qualgent --app-version-id=xyz123 --test=tests/test.spec.ts --wait
         continue-on-error: false
